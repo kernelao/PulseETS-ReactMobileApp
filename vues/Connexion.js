@@ -10,9 +10,23 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
+import { useAuth } from "../context/AuthContext";
+import base64 from "base-64";
+
+const generateFakeToken = (role = "ROLE_USER") => {
+  const header = { alg: "HS256", typ: "JWT" };
+  const payload = {
+    role,
+    exp: Math.floor(Date.now() / 1000) + 3600,
+  };
+
+  const encode = (obj) => base64.encode(JSON.stringify(obj));
+  return `${encode(header)}.${encode(payload)}.signature`;
+};
 
 export default function Connexion() {
   const navigation = useNavigation();
+  const { login } = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -22,34 +36,40 @@ export default function Connexion() {
     setErrMsg("");
   }, [email, password]);
 
+  // const handleConnexion = async () => {
+  //   try {
+  //     const response = await axios.post(
+  //       "http://localhost:8000//api/connexion",
+  //       {
+  //         email,
+  //         password,
+  //       }
+  //     );
+
+  //     const { token, role } = response.data;
+
+  //     if (token) {
+  //       console.log("Connecté :", token, role);
+  //       Alert.alert("Succès", "Connexion réussie !");
+  //       // TODO : Stocker le token et rediriger vers page principale (!!!!)
+  //     } else {
+  //       setErrMsg("Aucun token reçu.");
+  //     }
+  //   } catch (error) {
+  //     if (!error?.response) {
+  //       setErrMsg("Aucune réponse du serveur");
+  //     } else if (error.response?.status === 401) {
+  //       setErrMsg("Identifiants invalides");
+  //     } else {
+  //       setErrMsg("Connexion échouée");
+  //     }
+  //   }
+  // };
   const handleConnexion = async () => {
-    try {
-      const response = await axios.post(
-        "http://localhost:8000//api/connexion",
-        {
-          email,
-          password,
-        }
-      );
+    // Token factice pour test (1h d'expiration)
+    const fakeToken = generateFakeToken("ROLE_USER");
 
-      const { token, role } = response.data;
-
-      if (token) {
-        console.log("Connecté :", token, role);
-        Alert.alert("Succès", "Connexion réussie !");
-        // TODO : Stocker le token et rediriger vers page principale (!!!!)
-      } else {
-        setErrMsg("Aucun token reçu.");
-      }
-    } catch (error) {
-      if (!error?.response) {
-        setErrMsg("Aucune réponse du serveur");
-      } else if (error.response?.status === 401) {
-        setErrMsg("Identifiants invalides");
-      } else {
-        setErrMsg("Connexion échouée");
-      }
-    }
+    login(fakeToken, "ROLE_USER");
   };
 
   return (
