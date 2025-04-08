@@ -1,12 +1,12 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import CirclePom from './components/TimerPom/CircleTimer';
-
+import VuePomTache from './components/TimerPom/VuePomTache'
 export default function App() {
   return (
     <View style={styles.container}>
-      <CirclePom/>
+      <VuePomTache/>
+      
       <StatusBar style="auto" />
     </View>
   );
@@ -14,9 +14,10 @@ export default function App() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#fff',
+    paddingVertical: 20,
+    paddingBottom: 40,
     alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: '#f5f5f5',
   },
 });
+
