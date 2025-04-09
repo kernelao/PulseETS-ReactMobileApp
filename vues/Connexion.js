@@ -8,6 +8,7 @@ import {
   Alert,
   TouchableOpacity,
 } from "react-native";
+
 import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
 import { useAuth } from "../context/AuthContext";
@@ -36,41 +37,60 @@ export default function Connexion() {
     setErrMsg("");
   }, [email, password]);
 
-  // const handleConnexion = async () => {
-  //   try {
-  //     const response = await axios.post(
-  //       "http://localhost:8000//api/connexion",
-  //       {
-  //         email,
-  //         password,
-  //       }
-  //     );
+  // // Test GET à l'API pour voir si l'app y accède bien
+  // useEffect(() => {
+  //   axios
+  //     .get("http://10.192.183.90:8000")
+  //     .then((res) => {
+  //       console.log("Test GET API OK :", res.status);
+  //     })
+  //     .catch((err) => {
+  //       console.log("Test GET API échoué :", JSON.stringify(err, null, 2));
+  //     });
+  // }, []);
 
-  //     const { token, role } = response.data;
-
-  //     if (token) {
-  //       console.log("Connecté :", token, role);
-  //       Alert.alert("Succès", "Connexion réussie !");
-  //       // TODO : Stocker le token et rediriger vers page principale (!!!!)
-  //     } else {
-  //       setErrMsg("Aucun token reçu.");
-  //     }
-  //   } catch (error) {
-  //     if (!error?.response) {
-  //       setErrMsg("Aucune réponse du serveur");
-  //     } else if (error.response?.status === 401) {
-  //       setErrMsg("Identifiants invalides");
-  //     } else {
-  //       setErrMsg("Connexion échouée");
-  //     }
-  //   }
-  // };
   const handleConnexion = async () => {
-    // Token factice pour test (1h d'expiration)
-    const fakeToken = generateFakeToken("ROLE_USER");
+    try {
+      const response = await axios.post(
+        // "http://10.192.183.90:8000/api/connexion",
+        "http://172.20.10.3:8000/api/connexion",
+        {
+          email,
+          password,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-    login(fakeToken, "ROLE_USER");
+      const { token, role } = response.data;
+
+      if (token) {
+        console.log("Token reçu :", token);
+        await login(token);
+      } else {
+        setErrMsg("Aucun token reçu.");
+      }
+    } catch (error) {
+      console.log("Erreur Axios complète :", error);
+      if (!error?.response) {
+        setErrMsg("Aucune réponse du serveur");
+      } else if (error.response?.status === 401) {
+        setErrMsg("Identifiants invalides");
+      } else {
+        setErrMsg("Connexion échouée");
+      }
+    }
   };
+
+  // const handleConnexion = async () => {
+  //   // Token factice pour test (1h d'expiration)
+  //   const fakeToken = generateFakeToken("ROLE_USER");
+
+  //   login(fakeToken, "ROLE_USER");
+  // };
 
   return (
     <View style={styles.container}>

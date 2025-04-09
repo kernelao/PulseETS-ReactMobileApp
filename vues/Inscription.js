@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import axios from "axios";
 import { useNavigation } from "@react-navigation/native";
+import { useAuth } from "../context/AuthContext";
 
 // REGEX
 const USER_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
@@ -19,6 +20,7 @@ const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
 
 export default function Inscription() {
   const navigation = useNavigation();
+  const { login } = useAuth();
 
   const [username, setUsername] = useState("");
   const [validUsername, setValidUsername] = useState(false);
@@ -47,7 +49,8 @@ export default function Inscription() {
   const handleInscription = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:8000/api/inscription",
+        // "http://10.192.183.90:8000/api/inscription",
+        "http://172.20.10.3:8000/api/inscription",
         {
           username,
           email,
@@ -56,8 +59,14 @@ export default function Inscription() {
       );
 
       const { token, role } = response.data;
-      Alert.alert("Succès", "Inscription réussie !");
-      console.log("Token reçu :", token, "Rôle :", role);
+      if (token) {
+        login(token, role); // <- connexion automatique
+      } else {
+        setErrMsg("Inscription réussie, mais aucun token reçu.");
+      }
+
+      // Alert.alert("Succès", "Inscription réussie !");
+      // console.log("Token reçu :", token, "Rôle :", role);
     } catch (err) {
       console.error(err);
       if (!err?.response) {
