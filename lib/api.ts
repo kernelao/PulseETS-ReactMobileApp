@@ -1,28 +1,34 @@
 // lib/api.ts
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { API_URL } from '@env';
 
-// 👉 Remplace l’URL par l'adresse de ton backend Symfony local ou en prod
+// 👉 Adresse de ton backend Symfony
 const api = axios.create({
-  baseURL: 'http://localhost:8000/api', // ou https://ton-backend.com/api
+  baseURL: API_URL, // change localhost si tu testes sur mobile réel
   withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-// 👉 Middleware pour ajouter automatiquement le token (si tu stockes dans asyncStorage par exemple)
+// 👉 Ajoute automatiquement le token JWT à chaque requête
 api.interceptors.request.use(async (config) => {
-  const token = await getToken(); // ⚠️ getToken à implémenter selon ton auth
-  if (token) {
+  const token = await getToken();
+  if (token && config.headers) {
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
 });
 
-// 💡 Stub (à remplacer par une vraie fonction avec SecureStore ou AsyncStorage)
+// ✅ Récupère le token depuis AsyncStorage
 async function getToken(): Promise<string | null> {
-  // Exemple : tu peux utiliser SecureStore ou AsyncStorage ici
-  return null; // à remplacer
+  try {
+    return await AsyncStorage.getItem('token');
+  } catch (error) {
+    console.error('Erreur lors de la récupération du token :', error);
+    return null;
+  }
 }
 
 export default api;
