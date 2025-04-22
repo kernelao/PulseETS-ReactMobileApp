@@ -6,6 +6,12 @@
     "jsEngine": "hermes",
     "experimental": {
       "newArchEnabled": true
+    },
+    "android": {
+      "package": "com.anonymous.PulseETSReactMobileApp"
+    },
+    "ios": {
+      "bundleIdentifier": "com.anonymous.PulseETSReactMobileApp"
     }
   }
 }
