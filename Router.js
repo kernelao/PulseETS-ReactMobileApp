@@ -17,6 +17,8 @@ import Dashboard from "./vues/Dashboard";
 import Pomodoro from "./vues/Pomodoro";
 import Profil from "./vues/Profil";
 import Reglages from "./vues/Reglages";
+import ChangePassword from './vues/ChangePassword';
+import ChangeEmail from './vues/ChangeEmail';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -91,14 +93,21 @@ export default function Router() {
 
   return (
     <NavigationContainer>
-      {isAuthenticated ? (
-        <AppTabs />
-      ) : (
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="Connexion" component={Connexion} />
-          <Stack.Screen name="Inscription" component={Inscription} />
-        </Stack.Navigator>
-      )}
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        {!isAuthenticated ? (
+          <>
+            <Stack.Screen name="Connexion" component={Connexion} />
+            <Stack.Screen name="Inscription" component={Inscription} />
+          </>
+        ) : (
+          <>
+            <Stack.Screen name="AppTabs" component={AppTabs} />
+            <Stack.Screen name="ChangePassword" component={ChangePassword} />
+            <Stack.Screen name="ChangeEmail" component={ChangeEmail} />
+          </>
+        )}
+      </Stack.Navigator>
     </NavigationContainer>
   );
 }
+
