@@ -50,12 +50,14 @@ export default function Inscription() {
     try {
       const response = await axios.post(
         // "http://10.192.183.90:8000/api/inscription",
-        "http://172.20.10.3:8000/api/inscription",
+        //"http://172.20.10.3:8000/api/inscription",
+        "http://192.168.0.143:8000/api/inscription",
         {
           username,
           email,
           password,
-        }
+        },
+        {timeout: 10000}
       );
 
       const { token, role } = response.data;
@@ -67,7 +69,7 @@ export default function Inscription() {
 
       // Alert.alert("Succès", "Inscription réussie !");
       // console.log("Token reçu :", token, "Rôle :", role);
-    } catch (err) {
+    /*} catch (err) {
       console.error(err);
       if (!err?.response) {
         setErrMsg("Aucune réponse du serveur");
@@ -83,8 +85,18 @@ export default function Inscription() {
       } else {
         setErrMsg("Erreur d'inscription");
       }
-    }
-  };
+    }*/
+    }catch (err) {
+        console.error('Erreur Axios complète :', err); // <-- Ajoute ça pour voir tout
+        if (!err?.response) {
+          setErrMsg("Aucune réponse du serveur");
+        } else {
+          console.log('Détails de la réponse :', err.response.data); // <-- Voir le message de l'API
+          setErrMsg(`Erreur ${err.response.status} : ${err.response.data?.message || 'Erreur serveur'}`);
+        }
+      }
+      
+    };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
