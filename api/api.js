@@ -9,7 +9,6 @@ const api = axios.create({
   withCredentials: true,
 });
 
-// 👉 Ajout automatique du token JWT dans chaque requête
 api.interceptors.request.use(async (config) => {
   const token = await AsyncStorage.getItem('token');
   if (token) {
@@ -18,7 +17,6 @@ api.interceptors.request.use(async (config) => {
   return config;
 });
 
-// 👉 Interception des erreurs (ex: token expiré)
 api.interceptors.response.use(
   response => response,
   async error => {
@@ -26,18 +24,17 @@ api.interceptors.response.use(
       console.warn('⛔ Token expiré ou invalide, déconnexion automatique.');
       await AsyncStorage.removeItem('token');
 
-      // Redirection protégée
       setTimeout(() => {
         if (navigationRef.isReady()) {
           navigate('Connexion');
         } else {
           console.warn('⚠️ Navigation non prête, impossible de rediriger.');
         }
-      }, 300); // léger délai pour éviter les erreurs de timing
+      }, 300); 
     }
 
     return Promise.reject(error);
   }
 );
 
-export default api; // ✅ ne surtout pas oublier ça
+export default api;
