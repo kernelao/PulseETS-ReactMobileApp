@@ -112,7 +112,8 @@ const Reglages = () => {
           />
         </View>
 
-        <TouchableOpacity style={[styles.button, { backgroundColor: currentColors.cardBg }, styles.maxWidthContainer]} onPress={handleSubmit}>
+        <TouchableOpacity style={[styles.button, { backgroundColor: currentColors.cardBg }]} onPress={handleSubmit}>
+
           <Text style={[styles.buttonText, { color: currentColors.textColor }]}>Enregistrer</Text>
         </TouchableOpacity>
       </KeyboardAvoidingView>
