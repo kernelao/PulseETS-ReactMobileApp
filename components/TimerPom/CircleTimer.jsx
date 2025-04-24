@@ -184,13 +184,12 @@ const CirclePom = () => {
               {btn === 'pomodoro' ? 'Pomodoro' : btn === 'pauseCourte' ? 'Pause Courte' : 'Pause Longue'}
             </Text>
 
-            <Pressable onPress={sendSessionToAPI} style={styles.animatedBtn}>
-  <Text style={styles.animatedBtnText}>Tester Connexion API</Text>
-</Pressable>
+            
           </TouchableOpacity>
 
           
         ))}
+       
       </View>
 
       <View style={styles.cercleBox}>
