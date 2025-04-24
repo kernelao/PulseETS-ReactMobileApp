@@ -5,6 +5,7 @@ import { useAuth } from "../context/AuthContext";
 import Connexion from "../vues/Connexion";
 import Inscription from "../vues/Inscription";
 import MainStack from "./MainStack";
+import { navigationRef } from './RootNavigation';
 
 const Stack = createNativeStackNavigator();
 
@@ -12,7 +13,7 @@ export default function Router() {
   const { isAuthenticated } = useAuth();
 
   return (
-    <NavigationContainer>
+    <NavigationContainer ref={navigationRef}>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         {!isAuthenticated ? (
           <>

@@ -19,26 +19,41 @@ const Profile = () => {
   const [selectedBadge, setSelectedBadge] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
 
+
+  console.log("NAVIGATION:", navigation);
+
+
   useEffect(() => {
     const fetchProfile = async () => {
       try {
         const response = await api.get('/user/profile');
         if (response.data) {
           setUserData(response.data);
-          applyTheme(response.data.theme);
+          if (response.data.theme && themes[response.data.theme]) {
+            applyTheme(response.data.theme);
+          } else {
+            console.warn("Thème invalide ou manquant:", response.data.theme);
+          }        
         }
       } catch (error) {
-        console.error('Erreur lors du chargement du profil', error);
+        console.error("Erreur profil:", error?.response?.status || error.message);
       }
     };
 
     fetchProfile();
   }, []);
 
-  if (!userData) return <Text>Chargement...</Text>;
-
+  if (!userData) { return <Text>Chargement du profil...</Text>; }
+  if (!navigation || typeof navigation.push !== 'function') {
+    return <Text>Navigation corrompue dans Profil.jsx</Text>;
+  }
+  
+  
   const { avatarPrincipal, pulsePoints, unlockedAvatars = [], recompenses = [] } = userData;
-  const avatarXml = avatarMap[avatarPrincipal] || avatarMap['Jon Doe'] || '';
+  const defaultSvg = '<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="#ccc" /></svg>';
+  const avatarXml = avatarPrincipal && avatarMap[avatarPrincipal]
+  ? avatarMap[avatarPrincipal]
+  : avatarMap["Jon Doe"] ?? defaultSvg;
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: currentTheme.backgroundColor }}>
