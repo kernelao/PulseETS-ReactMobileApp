@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Alert, Platform, Dimensions, KeyboardAvoidingView, SafeAreaView } from "react-native";
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, Platform, Dimensions, KeyboardAvoidingView, SafeAreaView } from "react-native";
 import { useTheme } from "../context/ThemeContext";
 import { useAuth } from "../context/AuthContext";
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -12,23 +12,42 @@ const Reglages = () => {
   const [pauseCourte, setPauseCourte] = useState(5);
   const [pauseLongue, setPauseLongue] = useState(15);
   const [themeChoisi, setThemeChoisi] = useState(theme);
+  const [themeTemp, setThemeTemp] = useState(theme);
 
   const [open, setOpen] = useState(false);
   const [items, setItems] = useState([
     { label: 'Mode zen', value: 'Mode zen' },
     { label: 'Mode nuit', value: 'Mode nuit' },
-    { label: 'Mode jour', value: 'Mode jour' }
+    { label: 'Mode jour', value: 'Mode jour' },
+    { label: 'Cyberpunk', value: 'Cyberpunk' },
+    { label: 'Steampunk', value: 'Steampunk' },
+    { label: 'Space', value: 'Space' },
+    { label: 'Neon Lights', value: 'Neon Lights' },
+    { label: 'Vintage', value: 'Vintage' },
+    { label: 'Minimalist', value: 'Minimalist' },
   ]);
+
+  const themeColors = {
+    "mode_zen": { backgroundColor: "#9cccb5", textColor: "#0b0626", cardBg: "#e6f5e1" },
+    "mode_nuit": { backgroundColor: "#0b0626", textColor: "#eaeaea", cardBg: "#171a38" },
+    "mode_jour": { backgroundColor: "#eef5f8", textColor: "#24332a", cardBg: "#ffffff" },
+    "cyberpunk": { backgroundColor: "#0f0f2d", textColor: "#00ffff", cardBg: "#1a1a40" },
+    "steampunk": { backgroundColor: "#3e2f1c", textColor: "#ffd699", cardBg: "#5b4636" },
+    "space": { backgroundColor: "#0c1c36", textColor: "#e0e6f7", cardBg: "#1b2d4f" },
+    "neon_lights": { backgroundColor: "#1f0036", textColor: "#ff00ff", cardBg: "#3b0066" },
+    "vintage": { backgroundColor: "#f4e2d8", textColor: "#4e342e", cardBg: "#dfc3b4" },
+    "minimalist": { backgroundColor: "#ffffff", textColor: "#333", cardBg: "#f9f9f9" },
+  };
 
   const screenHeight = Dimensions.get('window').height;
   const dynamicPaddingTop = screenHeight * 0.05;
 
-  useEffect(() => {
-    // Charger les réglages si nécessaire
-  }, []);
+  const currentThemeKey = themeChoisi.replace(/\s+/g, "_").toLowerCase();
+  const currentColors = themeColors[currentThemeKey] || themeColors["mode_jour"];
 
   const handleSubmit = async () => {
-    changeTheme(themeChoisi);
+    setThemeChoisi(themeTemp);
+    changeTheme(themeTemp);
     try {
       await fetch(`http://192.168.0.143:8000/api/reglages`, {
         method: "PUT",
@@ -40,39 +59,33 @@ const Reglages = () => {
           pomodoro: parseInt(pomodoro),
           courte_pause: parseInt(pauseCourte),
           longue_pause: parseInt(pauseLongue),
-          theme: themeChoisi,
+          theme: themeTemp,
         }),
       });
-      Alert.alert("Succès", "Réglages enregistrés !");
     } catch (error) {
       console.error(error);
-      Alert.alert("Erreur", "Impossible d'enregistrer");
     }
   };
 
   return (
-    <SafeAreaView style={[
-      styles.container,
-      styles[`mode_${themeChoisi.replace(/\s+/g, "_").toLowerCase()}`],
-      { paddingTop: dynamicPaddingTop }
-    ]}>
+    <SafeAreaView style={[styles.container, { backgroundColor: currentColors.backgroundColor, paddingTop: dynamicPaddingTop, paddingHorizontal: 20, paddingBottom: 20 }]}>
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{ flex: 1, width: '100%', alignItems: "center" }}
       >
-        <Text style={styles.title}>Réglages</Text>
+        <Text style={[styles.title, { color: currentColors.textColor }]}>Réglages</Text>
 
-        <View style={styles.section}>
-          <Text style={styles.subtitle}>Minuteur</Text>
+        <View style={[styles.section, styles.viewMargin, styles.maxWidthContainer]}>
+          <Text style={[styles.subtitle, { color: currentColors.textColor }]}>Minuteur</Text>
 
           {[{ label: "Pomodoro", value: pomodoro, setter: setPomodoro },
             { label: "Pause Courte", value: pauseCourte, setter: setPauseCourte },
             { label: "Pause Longue", value: pauseLongue, setter: setPauseLongue },
           ].map((item, index) => (
             <View key={index} style={styles.inputGroup}>
-              <Text style={styles.label}>{item.label}</Text>
+              <Text style={[styles.label, { color: currentColors.textColor }]}>{item.label}</Text>
               <TextInput
-                style={styles.input}
+                style={[styles.input, { backgroundColor: currentColors.cardBg, color: currentColors.textColor, borderColor: currentColors.textColor }]}
                 keyboardType="numeric"
                 value={String(item.value)}
                 onChangeText={(text) => item.setter(text)}
@@ -81,25 +94,26 @@ const Reglages = () => {
           ))}
         </View>
 
-        <View style={{ width: '100%', marginBottom: 20 }}>
-          <Text style={styles.subtitle}>Changer le thème</Text>
+        <View style={[{ marginBottom: 20 }, styles.viewMargin, styles.maxWidthContainer]}>
+          <Text style={[styles.subtitle, { color: currentColors.textColor }]}>Changer le thème</Text>
 
           <DropDownPicker
             open={open}
-            value={themeChoisi}
+            value={themeTemp}
             items={items}
             setOpen={setOpen}
-            setValue={setThemeChoisi}
+            setValue={setThemeTemp}
             setItems={setItems}
-            style={styles.dropdown}
-            dropDownContainerStyle={styles.dropdownContainer}
+            style={[styles.dropdown, { backgroundColor: currentColors.cardBg, borderColor: currentColors.textColor }]}
+            dropDownContainerStyle={[styles.dropdownContainer, { backgroundColor: currentColors.cardBg, borderColor: currentColors.textColor }]}
             zIndex={1000}
             zIndexInverse={3000}
+            textStyle={{ color: currentColors.textColor }}
           />
         </View>
 
-        <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-          <Text style={styles.buttonText}>Enregistrer</Text>
+        <TouchableOpacity style={[styles.button, { backgroundColor: currentColors.cardBg }, styles.maxWidthContainer]} onPress={handleSubmit}>
+          <Text style={[styles.buttonText, { color: currentColors.textColor }]}>Enregistrer</Text>
         </TouchableOpacity>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -111,10 +125,15 @@ export default Reglages;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
-    margin: 20,
-    padding: 20, 
     justifyContent: "flex-start",
+  },
+  viewMargin: {
+    margin: 20,
+  },
+  maxWidthContainer: {
+    width: '100%',
+    maxWidth: 350,
+    alignSelf: 'center',
   },
   title: {
     fontSize: 26,
@@ -139,40 +158,25 @@ const styles = StyleSheet.create({
   },
   input: {
     borderWidth: 1,
-    borderColor: "#ccc",
     borderRadius: 8,
     paddingHorizontal: 10,
     fontSize: 16,
-    backgroundColor: "#fff",
     height: 50,
   },
   dropdown: {
     borderRadius: 8,
-    borderColor: '#ccc',
   },
   dropdownContainer: {
     borderRadius: 8,
-    borderColor: '#ccc',
   },
   button: {
-    backgroundColor: "#2e7d32",
     paddingVertical: 15,
     paddingHorizontal: 30,
     borderRadius: 10,
     marginTop: 10,
   },
   buttonText: {
-    color: "#fff",
     fontWeight: "bold",
     fontSize: 16,
-  },
-  mode_zen: {
-    backgroundColor: "#9cccb5",
-  },
-  mode_nuit: {
-    backgroundColor: "#0b0626",
-  },
-  mode_jour: {
-    backgroundColor: "#eef5f8",
   },
 });
