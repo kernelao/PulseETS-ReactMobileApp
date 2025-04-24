@@ -6,6 +6,8 @@ import { View, Text, TouchableOpacity, StyleSheet, Switch, Pressable } from 'rea
 import { CountdownCircleTimer } from 'react-native-countdown-circle-timer';
 import { Audio } from 'expo-av';
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 const CirclePom = () => {
   
   const [startTime, setStartTime] = useState(null);
@@ -82,9 +84,49 @@ const CirclePom = () => {
       return !prev;
     });
   };
+  
+  const sendSessionToAPI = async () => {
+    try {
+      const token = await AsyncStorage.getItem('token');
+      if (!token) {
+        console.warn('Token manquant.');
+        return;
+      }
+  
+      const sessionData = {
+        startedAt: startTime?.toISOString(), 
+        endedAt: new Date().toISOString(),
+        pomodoros_completes: pomodoroCount,
+        pomodoroDuration: duration.pomodoro,
+        shortBreak: duration.pauseCourte,
+        longBreak: duration.pauseLongue,
+        autoStart: auto,
+      };
+  
+      const response = await fetch('http://192.168.X.X:8000/api/pomodoro-session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify(sessionData),
+      });
+  
+      if (!response.ok) {
+        const text = await response.text(); 
+        console.error(`Erreur API (${response.status}): ${text}`);
+        return;
+      }
+  
+      console.log('Session envoyée avec succès.');
+    } catch (error) {
+      console.error('Erreur réseau :', error.message);
+    }
+  };
 
   const handleComplete = async () => {
     await playAlarm();
+    await sendSessionToAPI(); 
 
     const nextState = () => {
       if (mode === 'pomodoro') {
@@ -114,6 +156,8 @@ const CirclePom = () => {
     return { shouldRepeat: false };
   };
 
+  
+
   const renderTime = ({ remainingTime }) => {
     const minutes = Math.floor(remainingTime / 60);
     const seconds = remainingTime % 60;
@@ -139,7 +183,13 @@ const CirclePom = () => {
             <Text style={styles.modeButtonText}>
               {btn === 'pomodoro' ? 'Pomodoro' : btn === 'pauseCourte' ? 'Pause Courte' : 'Pause Longue'}
             </Text>
+
+            <Pressable onPress={sendSessionToAPI} style={styles.animatedBtn}>
+  <Text style={styles.animatedBtnText}>Tester Connexion API</Text>
+</Pressable>
           </TouchableOpacity>
+
+          
         ))}
       </View>
 
