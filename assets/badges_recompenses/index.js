@@ -1,59 +1,54 @@
-// Import des SVG
-import I1NoteAdd from './1noteAdd.svg';
-import I1SessionComplete from './1sessionComplete.svg';
-import I1TacheComplete from './1tacheComplete.svg';
-import I5NotesAdd from './5notesAdd.svg';
-import I5SessionsComplete from './5sessionsComplete.svg';
-import I5TachesComplete from './5tachesComplete.svg';
-import I10SessionsComplete from './10sessionsComplete.svg';
-import I15NotesAdd from './15notesAdd.svg';
-import I20TachesComplete from './20tachesComplete.svg';
-import I25SessionsComplete from './25sessionsComplete.svg';
-import I30NotesAdd from './30notesAdd.svg';
-import I50SessionsComplete from './50sessionsComplete.svg';
-import I50TachesComplete from './50tachesComplete.svg';
-import I100NotesAdd from './100notesAdd.svg';
-import I100SessionsComplete from './100sessionsComplete.svg';
-import I100TachesComplete from './100tachesComplete.svg';
+import i1noteAdd from './1noteAdd.svg';
+import i1sessionComplete from './1sessionComplete.svg';
+import i1tacheComplete from './1tacheComplete.svg';
+import i5notesAdd from './5notesAdd.svg';
+import i5sessionsComplete from './5sessionsComplete.svg';
+import i5tachesComplete from './5tachesComplete.svg';
+import i10sessionsComplete from './10sessionsComplete.svg';
+import i15notesAdd from './15notesAdd.svg';
+import i20tachesComplete from './20tachesComplete.svg';
+import i25sessionsComplete from './25sessionsComplete.svg';
+import i30notesAdd from './30notesAdd.svg';
+import i50sessionsComplete from './50sessionsComplete.svg';
+import i50tachesComplete from './50tachesComplete.svg';
+import i100notesAdd from './100notesAdd.svg';
+import i100sessionsComplete from './100sessionsComplete.svg';
+import i100tachesComplete from './100tachesComplete.svg';
 
-// Mapping des noms vers les icônes SVG
 export const badgeMap = {
-  '1 note ajoutée': I1NoteAdd,
-  '1 session complétée': I1SessionComplete,
-  '1 tâche complétée': I1TacheComplete,
-  '5 notes ajoutées': I5NotesAdd,
-  '5 sessions complétées': I5SessionsComplete,
-  '5 tâches complétées': I5TachesComplete,
-  '10 sessions complétées': I10SessionsComplete,
-  '15 notes ajoutées': I15NotesAdd,
-  '20 tâches complétées': I20TachesComplete,
-  '25 sessions complétées': I25SessionsComplete,
-  '30 notes ajoutées': I30NotesAdd,
-  '50 sessions complétées': I50SessionsComplete,
-  '50 tâches complétées': I50TachesComplete,
-  '100 notes ajoutées': I100NotesAdd,
-  '100 sessions complétées': I100SessionsComplete,
-  '100 tâches complétées': I100TachesComplete
+  i1noteAdd,
+  i1sessionComplete,
+  i1tacheComplete,
+  i5notesAdd,
+  i5sessionsComplete,
+  i5tachesComplete,
+  i10sessionsComplete,
+  i15notesAdd,
+  i20tachesComplete,
+  i25sessionsComplete,
+  i30notesAdd,
+  i50sessionsComplete,
+  i50tachesComplete,
+  i100notesAdd,
+  i100sessionsComplete,
+  i100tachesComplete
 };
 
-// Descriptions des récompenses pour l'affichage dans la modale
 export const badgeDescriptions = {
-  '1 note ajoutée': "Tu as ajouté ta toute première note. Bien joué !",
-  '1 session complétée': "Félicitations pour ta première session Pomodoro réussie !",
-  '1 tâche complétée': "Une tâche de moins dans ta liste. Continue comme ça !",
-  '5 notes ajoutées': "Déjà 5 notes créées ! Tu progresses vite.",
-  '5 sessions complétées': "Tu as complété 5 sessions. La constance paie !",
-  '5 tâches complétées': "Bravo pour les 5 tâches accomplies !",
-  '10 sessions complétées': "10 sessions terminées, tu prends le rythme !",
-  '15 notes ajoutées': "15 notes, c'est un bon début de carnet numérique.",
-  '20 tâches complétées': "20 tâches finalisées, quelle productivité !",
-  '25 sessions complétées': "25 sessions ! Tu es un maître du focus.",
-  '30 notes ajoutées': "30 notes au compteur. Tu documentes comme un pro.",
-  '50 sessions complétées': "50 sessions ! Tu mérites une pause bien méritée.",
-  '50 tâches complétées': "50 tâches ? Tu domines ta to-do liste.",
-  '100 notes ajoutées': "100 notes ! Tu peux sortir ton prix Pulitzer.",
-  '100 sessions complétées': "100 sessions Pomodoro. Discipline de fer !",
-  '100 tâches complétées': "Tu as accompli 100 tâches. C’est incroyable !"
+  i1noteAdd: '1 note ajoutée',
+  i1sessionComplete: '1 session complétée',
+  i1tacheComplete: '1 tâche complétée',
+  i5notesAdd: '5 notes ajoutées',
+  i5sessionsComplete: '5 sessions complétées',
+  i5tachesComplete: '5 tâches complétées',
+  i10sessionsComplete: '10 sessions complétées',
+  i15notesAdd: '15 notes ajoutées',
+  i20tachesComplete: '20 tâches complétées',
+  i25sessionsComplete: '25 sessions complétées',
+  i30notesAdd: '30 notes ajoutées',
+  i50sessionsComplete: '50 sessions complétées',
+  i50tachesComplete: '50 tâches complétées',
+  i100notesAdd: '100 notes ajoutées',
+  i100sessionsComplete: '100 sessions complétées',
+  i100tachesComplete: '100 tâches complétées',
 };
-
-export default badgeMap;

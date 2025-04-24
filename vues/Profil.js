@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Modal } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
-import { SvgXml } from 'react-native-svg';
 import api from '../api/api';
 import { avatarMap } from '../assets/images_avatar';
 import { badgeMap, badgeDescriptions } from '../assets/badges_recompenses';
@@ -18,17 +17,25 @@ const Profile = () => {
   const currentTheme = themes[theme] || themes['mode-jour'];
   const [selectedBadge, setSelectedBadge] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
-
-
-  console.log("NAVIGATION:", navigation);
+  const normalizeType = (type) => {
+    switch (type) {
+      case 'notesAjoutees': return 'noteAdd';
+      case 'sessionsCompletes': return 'sessionComplete';
+      case 'tachesCompletes': return 'tacheComplete';
+      default: return type;
+    }
+  };
+    
 
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
         const response = await api.get('/user/profile');
+        console.log("RESPONSE PROFIL:", response.data);
         if (response.data) {
           setUserData(response.data);
+          console.log("avatarPrincipal depuis data:", response.data.avatarPrincipal); // ✅
           if (response.data.theme && themes[response.data.theme]) {
             applyTheme(response.data.theme);
           } else {
@@ -52,21 +59,33 @@ const Profile = () => {
   
   
   const { avatarPrincipal, pulsePoints, unlockedAvatars = [], recompenses = [] } = userData;
+  console.log("🧩 RECOMPENSES BRUTES :", recompenses);
+  const recompensesConverties = recompenses.map((r) => `i${r.valeur}${normalizeType(r.type)}`);
+
   const defaultSvg = '<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="#ccc" /></svg>';
-  const avatarXml = avatarPrincipal && avatarMap[avatarPrincipal]
-  ? avatarMap[avatarPrincipal]
-  : avatarMap["Jon Doe"] ?? defaultSvg;
+  const rawAvatar = avatarMap[avatarPrincipal] ?? avatarMap["Jon Doe"] ?? defaultSvg;
+  const avatarXml = typeof rawAvatar === 'string' && rawAvatar.includes('<svg') ? rawAvatar : defaultSvg;
+  console.log("✅ avatarXml valid?", typeof avatarXml === 'string' && avatarXml.includes('<svg'));
+
+  if (!avatarMap[avatarPrincipal]) {
+    console.warn("⚠️ Avatar XML manquant pour :", avatarPrincipal);
+  }
+  
+
+  console.log("userData.avatarPrincipal:", avatarPrincipal);
+  console.log("avatarMap[avatarPrincipal]:", avatarMap[avatarPrincipal]);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: currentTheme.backgroundColor }}>
       <ScrollView contentContainerStyle={styles.container}>
-        <View style={styles.avatarWrapper}>
-          {avatarXml ? (
-            <SvgXml xml={avatarXml} width={120} height={120} />
-          ) : (
-            <Text style={{ color: currentTheme.textColor }}>Avatar non disponible</Text>
-          )}
-        </View>
+      <View style={styles.avatarWrapper}>
+      {avatarMap[avatarPrincipal] ? (
+  React.createElement(avatarMap[avatarPrincipal], { width: 120, height: 120 })
+) : (
+  <Text>❌ Avatar invalide</Text>
+)}
+
+</View>
 
         <Text style={[styles.pointsText, { color: currentTheme.textColor }]}>
           Points Pulse : {pulsePoints}
@@ -76,52 +95,69 @@ const Profile = () => {
           Avatars débloqués
         </Text>
         <ScrollView horizontal>
-          {Array.isArray(unlockedAvatars) && unlockedAvatars.map((name, index) => {
-            const xml = avatarMap[name] || avatarMap['Jon Doe'];
-            return (
-              <View key={index} style={styles.smallAvatarWrapper}>
-                {xml ? <SvgXml xml={xml} width={70} height={70} /> : null}
-              </View>
-            );
-          })}
-        </ScrollView>
+        {unlockedAvatars.map((name, index) => {
+  const AvatarComponent = avatarMap[name] || avatarMap['Jon Doe'];
+  return (
+    <View key={index} style={styles.smallAvatarWrapper}>
+      {AvatarComponent ? (
+        React.createElement(AvatarComponent, { width: 70, height: 70 })
+      ) : (
+        <Text style={{ fontSize: 10, color: 'red' }}>❌</Text>
+      )}
+    </View>
+  );
+})}
+
+</ScrollView>
+
 
         <Text style={[styles.sectionTitle, { color: currentTheme.textColor }]}>
           Récompenses
         </Text>
         <View style={styles.badgeContainer}>
-          {Object.keys(badgeMap).map((badge, index) => {
-            const isUnlocked = recompenses.includes(badge);
-            const xml = badgeMap[badge];
-            return (
-              <TouchableOpacity
-                key={index}
-                onPress={() => {
-                  if (isUnlocked) {
-                    setSelectedBadge(badge);
-                    setModalVisible(true);
-                  }
-                }}
-              >
-                <View style={[styles.badge, !isUnlocked && styles.badgeLocked]}>
-                  {xml ? <SvgXml xml={xml} width={60} height={60} /> : null}
-                </View>
-              </TouchableOpacity>
-            );
-          })}
+        {Object.keys(badgeMap).map((badge, index) => {
+  const isUnlocked = recompensesConverties.includes(badge);
+  const BadgeComponent = badgeMap[badge];
+
+  if (!BadgeComponent) {
+    console.warn("⚠️ Badge SVG manquant pour :", badge);
+  }
+
+  return (
+    <TouchableOpacity
+      key={index}
+      onPress={() => {
+        console.log('Badge cliqué :', badge);
+        setSelectedBadge(badge);
+        setModalVisible(true);
+      }}
+    >
+      <View style={[styles.badge, !isUnlocked && styles.badgeLocked]}>
+      {BadgeComponent ? (
+  React.createElement(BadgeComponent, { width: 60, height: 60 })
+) : (
+  <Text style={{ fontSize: 10 }}>⛔</Text>
+)}
+      </View>
+    </TouchableOpacity>
+  );
+})}
+
         </View>
 
         <Modal visible={modalVisible} transparent animationType="fade">
           <View style={styles.modalOverlay}>
             <View style={[styles.modalContent, { backgroundColor: currentTheme.cardBackground || '#fff' }]}>
-              <Text style={[styles.modalTitle, { color: currentTheme.textColor }]}>
-                Récompense débloquée !
-              </Text>
+            <Text style={[styles.modalTitle, { color: currentTheme.textColor }]}>
+  {recompensesConverties.includes(selectedBadge)
+    ? "Récompense débloquée !"
+    : "À débloquer"}
+</Text>
               <Text style={[styles.modalText, { color: currentTheme.textColor }]}>
                 {badgeDescriptions[selectedBadge] || 'Récompense spéciale débloquée !'}
               </Text>
               <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.modalClose}>
-                <Text style={{ color: 'white' }}>Fermer</Text>
+               <Text style={{ color: 'white' }}>Fermer</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -217,6 +253,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(0,0,0,0.6)',
+    zIndex: 9999,
+    elevation: 9999,
   },
   modalContent: {
     padding: 20,

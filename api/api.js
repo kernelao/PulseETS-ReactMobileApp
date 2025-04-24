@@ -26,7 +26,7 @@ api.interceptors.response.use(
 
       setTimeout(() => {
         if (navigationRef.isReady()) {
-          navigate('Connexion');
+          navigateSafe('Connexion');
         } else {
           console.warn('⚠️ Navigation non prête, impossible de rediriger.');
         }

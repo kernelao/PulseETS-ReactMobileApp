@@ -107,7 +107,7 @@ export default function Connexion() {
       />
 
       <Button title="Se connecter" onPress={handleConnexion} />
-
+    
       <TouchableOpacity onPress={() => navigation.navigate("Inscription")}>
         <Text style={styles.link}>Pas encore inscrit ? Crée un compte</Text>
       </TouchableOpacity>
