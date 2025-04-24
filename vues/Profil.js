@@ -43,7 +43,9 @@ const Profile = () => {
     fetchProfile();
   }, []);
 
-  if (!userData) { return <Text>Chargement du profil...</Text>; }
+  if (!userData || typeof userData !== 'object') {
+    return <Text>Chargement du profil...</Text>;
+  }
   if (!navigation || typeof navigation.push !== 'function') {
     return <Text>Navigation corrompue dans Profil.jsx</Text>;
   }
@@ -74,7 +76,7 @@ const Profile = () => {
           Avatars débloqués
         </Text>
         <ScrollView horizontal>
-          {unlockedAvatars.map((name, index) => {
+          {Array.isArray(unlockedAvatars) && unlockedAvatars.map((name, index) => {
             const xml = avatarMap[name] || avatarMap['Jon Doe'];
             return (
               <View key={index} style={styles.smallAvatarWrapper}>
