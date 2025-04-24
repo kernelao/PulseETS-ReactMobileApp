@@ -1,8 +1,9 @@
+// /api/api.js
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const api = axios.create({
-  baseURL: 'http://192.168.2.144:8000/api', // ou ton IP réseau si besoin
+  baseURL: 'https://44d3-142-137-166-160.ngrok-free.app/api',
   withCredentials: true,
 });
 
@@ -14,5 +15,4 @@ api.interceptors.request.use(async (config) => {
   return config;
 });
 
-export default api;
-
+export default api; // ✅ ne surtout pas oublier ça

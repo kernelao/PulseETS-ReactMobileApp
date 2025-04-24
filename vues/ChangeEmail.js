@@ -1,56 +1,103 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import api from '../api/api';
+import { useTheme } from '../context/ThemeContext';
+import { themes } from '../styles/themes';
 
 const ChangeEmail = ({ navigation }) => {
-  const [email, setEmail] = useState('');
+  const [oldEmail, setOldEmail] = useState('');
+  const [newEmail, setNewEmail] = useState('');
+  const { theme } = useTheme();
+  const currentTheme = themes[theme] || themes['mode-jour'];
 
   const handleChangeEmail = async () => {
+    if (!oldEmail || !newEmail) {
+      Alert.alert('Erreur', 'Veuillez remplir les deux champs');
+      return;
+    }
+
     try {
-      await api.put('/user/email', { email });
+      await api.put('/user/email', {
+        oldEmail,
+        newEmail
+      });
       Alert.alert('Succès', 'Courriel modifié');
       navigation.goBack();
     } catch (err) {
-      Alert.alert('Erreur', 'Impossible de modifier le courriel');
+      Alert.alert('Erreur', 'Échec de modification. Vérifiez votre ancien courriel.');
       console.error(err);
     }
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.label}>Nouveau courriel :</Text>
-      <TextInput
-        keyboardType="email-address"
-        style={styles.input}
-        placeholder="exemple@email.com"
-        value={email}
-        onChangeText={setEmail}
-      />
+    <SafeAreaView style={[styles.container, { backgroundColor: currentTheme.backgroundColor }]}>
+      <View style={styles.inner}>
+        <Text style={[styles.label, { color: currentTheme.textColor }]}>Ancien courriel :</Text>
+        <TextInput
+          keyboardType="email-address"
+          style={styles.input}
+          placeholder="ancien@email.com"
+          value={oldEmail}
+          onChangeText={setOldEmail}
+        />
 
-      <TouchableOpacity style={styles.button} onPress={handleChangeEmail}>
-        <Text style={styles.buttonText}>Valider</Text>
-      </TouchableOpacity>
+        <Text style={[styles.label, { color: currentTheme.textColor }]}>Nouveau courriel :</Text>
+        <TextInput
+          keyboardType="email-address"
+          style={styles.input}
+          placeholder="nouveau@email.com"
+          value={newEmail}
+          onChangeText={setNewEmail}
+        />
 
-      <TouchableOpacity style={styles.cancelButton} onPress={() => navigation.goBack()}>
-        <Text style={styles.cancelText}>Annuler</Text>
-      </TouchableOpacity>
-    </View>
+        <TouchableOpacity style={[styles.button, { backgroundColor: currentTheme.primary }]} onPress={handleChangeEmail}>
+          <Text style={styles.buttonText}>Valider</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.cancelButton} onPress={() => navigation.goBack()}>
+          <Text style={styles.cancelText}>Annuler</Text>
+        </TouchableOpacity>
+      </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { padding: 20 },
-  label: { fontSize: 16, marginBottom: 8 },
+  container: {
+    flex: 1,
+  },
+  inner: {
+    padding: 20,
+    paddingTop: 40, // ← ajuste ici pour abaisser un peu
+  },
+  label: {
+    fontSize: 16,
+    marginBottom: 8
+  },
   input: {
-    borderWidth: 1, borderColor: '#ccc', borderRadius: 8,
-    padding: 10, marginBottom: 20,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 8,
+    padding: 10,
+    marginBottom: 20
   },
   button: {
-    backgroundColor: '#2a75f3', padding: 12, borderRadius: 8, alignItems: 'center',
+    padding: 12,
+    borderRadius: 8,
+    alignItems: 'center'
   },
-  buttonText: { color: '#fff', fontWeight: 'bold' },
-  cancelButton: { marginTop: 15, alignItems: 'center' },
-  cancelText: { color: '#888' },
+  buttonText: {
+    color: '#fff',
+    fontWeight: 'bold'
+  },
+  cancelButton: {
+    marginTop: 15,
+    alignItems: 'center'
+  },
+  cancelText: {
+    color: '#888'
+  }
 });
 
 export default ChangeEmail;

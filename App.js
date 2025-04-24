@@ -1,5 +1,5 @@
 import React from "react";
-import Router from "./Router";
+import Router from "./navigation/Router";
 import { AuthProvider } from "./context/AuthContext";
 import { ThemeProvider } from "./context/ThemeContext";
 

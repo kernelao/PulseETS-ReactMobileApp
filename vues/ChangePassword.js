@@ -1,56 +1,103 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import api from '../api/api';
+import { useTheme } from '../context/ThemeContext';
+import { themes } from '../styles/themes';
 
 const ChangePassword = ({ navigation }) => {
-  const [password, setPassword] = useState('');
+  const [oldPassword, setOldPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const { theme } = useTheme();
+  const currentTheme = themes[theme] || themes['mode-jour'];
 
   const handleChangePassword = async () => {
+    if (!oldPassword || !newPassword) {
+      Alert.alert('Erreur', 'Veuillez remplir les deux champs');
+      return;
+    }
+
     try {
-      await api.put('/user/password', { password });
+      await api.put('/user/password', {
+        oldPassword,
+        newPassword
+      });
       Alert.alert('Succès', 'Mot de passe modifié');
       navigation.goBack();
     } catch (err) {
-      Alert.alert('Erreur', 'Impossible de modifier le mot de passe');
+      Alert.alert('Erreur', 'Échec de modification. Vérifiez votre ancien mot de passe.');
       console.error(err);
     }
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.label}>Nouveau mot de passe :</Text>
-      <TextInput
-        secureTextEntry
-        style={styles.input}
-        placeholder="••••••••"
-        value={password}
-        onChangeText={setPassword}
-      />
+    <SafeAreaView style={[styles.container, { backgroundColor: currentTheme.backgroundColor }]}>
+      <View style={styles.inner}>
+        <Text style={[styles.label, { color: currentTheme.textColor }]}>Ancien mot de passe :</Text>
+        <TextInput
+          secureTextEntry
+          style={styles.input}
+          placeholder="••••••••"
+          value={oldPassword}
+          onChangeText={setOldPassword}
+        />
 
-      <TouchableOpacity style={styles.button} onPress={handleChangePassword}>
-        <Text style={styles.buttonText}>Valider</Text>
-      </TouchableOpacity>
+        <Text style={[styles.label, { color: currentTheme.textColor }]}>Nouveau mot de passe :</Text>
+        <TextInput
+          secureTextEntry
+          style={styles.input}
+          placeholder="••••••••"
+          value={newPassword}
+          onChangeText={setNewPassword}
+        />
 
-      <TouchableOpacity style={styles.cancelButton} onPress={() => navigation.goBack()}>
-        <Text style={styles.cancelText}>Annuler</Text>
-      </TouchableOpacity>
-    </View>
+        <TouchableOpacity style={[styles.button, { backgroundColor: currentTheme.primary }]} onPress={handleChangePassword}>
+          <Text style={styles.buttonText}>Valider</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.cancelButton} onPress={() => navigation.goBack()}>
+          <Text style={styles.cancelText}>Annuler</Text>
+        </TouchableOpacity>
+      </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { padding: 20 },
-  label: { fontSize: 16, marginBottom: 8 },
+  container: {
+    flex: 1,
+  },
+  inner: {
+    padding: 20,
+    paddingTop: 40, // ↓ pour espacer du haut de l'écran
+  },
+  label: {
+    fontSize: 16,
+    marginBottom: 8
+  },
   input: {
-    borderWidth: 1, borderColor: '#ccc', borderRadius: 8,
-    padding: 10, marginBottom: 20,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 8,
+    padding: 10,
+    marginBottom: 20
   },
   button: {
-    backgroundColor: '#2a75f3', padding: 12, borderRadius: 8, alignItems: 'center',
+    padding: 12,
+    borderRadius: 8,
+    alignItems: 'center'
   },
-  buttonText: { color: '#fff', fontWeight: 'bold' },
-  cancelButton: { marginTop: 15, alignItems: 'center' },
-  cancelText: { color: '#888' },
+  buttonText: {
+    color: '#fff',
+    fontWeight: 'bold'
+  },
+  cancelButton: {
+    marginTop: 15,
+    alignItems: 'center'
+  },
+  cancelText: {
+    color: '#888'
+  }
 });
 
 export default ChangePassword;
