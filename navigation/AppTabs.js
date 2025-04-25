@@ -8,7 +8,7 @@ import { useAuth } from "../context/AuthContext";
 
 // Écrans
 import Dashboard from "../vues/Dashboard";
-import Pomodoro from "../vues/Pomodoro";
+import Pomodoro from "../components/TimerPom/VuePomTache";
 import ProfileStack from "../navigation/ProfileStack"; // ← change ici
 import Reglages from "../vues/Reglages";
 
