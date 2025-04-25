@@ -57,6 +57,24 @@ export default function Connexion() {
   
       const { token } = response.data;
   
+      const response = await axios.post(
+        // "http://10.192.183.90:8000/api/connexion",
+        //"http://172.20.10.3:8000/api/connexion",
+        // "http://192.168.0.143:8000/api/connexion",
+         "http://10.0.0.11:8000/api/connexion",
+        {
+          email,
+          password,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      const { token, role } = response.data;
+
       if (token) {
         console.log("✅ Token reçu :", token);
         await login(token); // → stocke dans AsyncStorage
