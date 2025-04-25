@@ -1,53 +1,29 @@
-import DefaultAvatar from './defaultavatar.svg';
-import AvatarChandailRose from './avatarchandailrose.svg';
-import AvatarChapeauGris from './avatarchapeaugris.svg';
-import AvatarChapeauShades from './avatarchapeaushades.svg';
-import AvatarCheveuxBleus from './avatarcheveuxbleus.svg';
-import AvatarCheveuxRoux from './avatarcheveuxroux.svg';
-import AvatarGreenBlack from './avatargreenblack.svg';
-import AvatarHatMauve from './avatarhatmauve.svg';
-import AvatarLunettesFancy from './avatarlunettesfancy.svg';
-import AvatarRoussePurpleHat from './avatarroussepurplehat.svg';
-import AvatarShades from './avatarshades.svg';
-import AvatarSuits from './avatarsuits.svg';
-import SpecialBatman from './SPECIALbatman.svg';
-import SpecialCr7 from './SPECIALcr7.svg';
-import SpecialFemaleSuperhero from './SPECIALfemalesuperhero.svg';
-import SpecialIronman from './SPECIALironman.svg';
-import SpecialJoker from './SPECIALjoker.svg';
-import VIPAvatarGreenBlack from './VIPavatargreenblack.svg';
-import VIPAvatarShadesCheveuxVert from './VIPavatarshadescheveuxvert.svg';
-import ExclusiveNeon from './ExclusiveNeon.svg';
-import ExclusiveSpaceExplorer from './ExclusiveSpaceExplorer.svg';
-import ExclusiveSteampunk from './ExclusiveSteampunk.svg';
-import ExclusiveWarrior from './ExclusiveWarrior.svg';
-import ExclusiveWizard from './ExclusiveWizard.svg';
-
-export const avatarMap = {
-  "Jon Doe": DefaultAvatar,
-  "Lina": AvatarChandailRose,
-  "Grey Kid": AvatarChapeauGris,
-  "Incognita": AvatarChapeauShades,
-  "Julie": AvatarCheveuxBleus,
-  "Roussette": AvatarCheveuxRoux,
-  "Wild n Serious": AvatarGreenBlack,
-  "Sequelita": AvatarHatMauve,
-  "80's boy": AvatarLunettesFancy,
-  "Kim Possible": AvatarRoussePurpleHat,
-  "Cool guy": AvatarShades,
-  "Suit man": AvatarSuits,
-  "I am Batman": SpecialBatman,
-  "Suuuuuu": SpecialCr7,
-  "Elektra": SpecialFemaleSuperhero,
-  "Tony Stark aka Ironman": SpecialIronman,
-  "Why so serious?": SpecialJoker,
-  "Wild n serious on vacation": VIPAvatarGreenBlack,
-  "Donna": VIPAvatarShadesCheveuxVert,
-  "Neon Lights": ExclusiveNeon,
-  "Space Explorer": ExclusiveSpaceExplorer,
-  "Steampunk Voyager": ExclusiveSteampunk,
-  "Viking Warrior": ExclusiveWarrior,
-  "Wizard Supreme": ExclusiveWizard,
+// assets/images_avatar/index.js
+const avatarMap = {
+  'Jon Doe': require('./defaultavatar.png'),
+  'Lina': require('./avatarchandailrose.png'),
+  'Grey Kid': require('./avatarchapeaugris.png'),
+  'Incognita': require('./avatarchapeaushades.png'),
+  'Julie': require('./avatarcheveuxbleus.png'),
+  'Roussette': require('./avatarcheveuxroux.png'),
+  'Wild n Serious': require('./avatargreenblack.png'),
+  'Sequelita': require('./avatarhatmauve.png'),
+  "80's boy": require('./avatarlunettesfancy.png'),
+  'Kim Possible': require('./avatarroussepurplehat.png'),
+  'Cool guy': require('./avatarshades.png'),
+  'Suit man': require('./avatarsuits.png'),
+  'I am Batman': require('./SPECIALbatman.png'),
+  'Suuuuuu': require('./SPECIALcr7.png'),
+  'Elektra': require('./SPECIALfemalesuperhero.png'),
+  'Tony Stark aka Ironman': require('./SPECIALironman.png'),
+  'Why so serious?': require('./SPECIALjoker.png'),
+  'Wild n serious on vacation': require('./VIPavatargreenblack.png'),
+  'Donna': require('./VIPavatarshadescheveuxvert.png'),
+  'Neon Lights': require('./ExclusiveNeon.png'),
+  'Space Explorer': require('./ExclusiveSpaceExplorer.png'),
+  'Steampunk Voyager': require('./ExclusiveSteampunk.png'),
+  'Viking Warrior': require('./ExclusiveWarrior.png'),
+  'Wizard Supreme': require('./ExclusiveWizard.png'),
 };
 
 export default avatarMap;

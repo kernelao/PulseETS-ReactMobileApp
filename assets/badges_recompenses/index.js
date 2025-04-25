@@ -1,6 +1,6 @@
-import i1noteAdd from './1noteAdd.svg';
-import i1sessionComplete from './1sessionComplete.svg';
-import i1tacheComplete from './1tacheComplete.svg';
+import i1notesAdd from './1noteAdd.svg';
+import i1sessionsComplete from './1sessionComplete.svg';
+import i1tachesComplete from './1tacheComplete.svg';
 import i5notesAdd from './5notesAdd.svg';
 import i5sessionsComplete from './5sessionsComplete.svg';
 import i5tachesComplete from './5tachesComplete.svg';
@@ -16,9 +16,9 @@ import i100sessionsComplete from './100sessionsComplete.svg';
 import i100tachesComplete from './100tachesComplete.svg';
 
 export const badgeMap = {
-  i1noteAdd,
-  i1sessionComplete,
-  i1tacheComplete,
+  i1notesAdd,
+  i1sessionsComplete,
+  i1tachesComplete,
   i5notesAdd,
   i5sessionsComplete,
   i5tachesComplete,
@@ -35,9 +35,9 @@ export const badgeMap = {
 };
 
 export const badgeDescriptions = {
-  i1noteAdd: '1 note ajoutée',
-  i1sessionComplete: '1 session complétée',
-  i1tacheComplete: '1 tâche complétée',
+  i1notesAdd: '1 note ajoutée',
+  i1sessionsComplete: '1 session complétée',
+  i1tachesComplete: '1 tâche complétée',
   i5notesAdd: '5 notes ajoutées',
   i5sessionsComplete: '5 sessions complétées',
   i5tachesComplete: '5 tâches complétées',
