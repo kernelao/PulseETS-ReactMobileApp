@@ -50,19 +50,16 @@ export default function Connexion() {
   // }, []);
   const handleConnexion = async () => {
     try {
-      const response = await api.post("/connexion", {
-        email,
-        password,
-      });
+      
   
       const { token } = response.data;
   
       const response = await axios.post(
         // "http://10.192.183.90:8000/api/connexion",
         //"http://172.20.10.3:8000/api/connexion",
-        "http://10.0.0.11:8000/api/connexion",
-        // "http://192.168.0.143:8000/api/connexion",
-         "http://10.0.0.11:8000/api/connexion",
+        //"http://10.0.0.11:8000/api/connexion",
+        "htpp://10.192.169.173:8000/api/connexion",
+        
         {
           email,
           password,
@@ -74,7 +71,7 @@ export default function Connexion() {
         }
       );
 
-      const { token, role } = response.data;
+      
 
       if (token) {
         console.log("✅ Token reçu :", token);
@@ -83,7 +80,7 @@ export default function Connexion() {
         setErrMsg("Aucun token reçu.");
       }
     } catch (error) {
-      console.log("❌ Erreur Axios complète :", error);
+      console.log("Erreur Axios complète :", error);
       if (!error?.response) {
         setErrMsg("Aucune réponse du serveur");
       } else if (error.response?.status === 401) {
