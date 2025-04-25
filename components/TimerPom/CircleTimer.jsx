@@ -1,16 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
-
-import { Dimensions } from 'react-native';
-const { width: screenWidth } = Dimensions.get('window');
 import { View, Text, TouchableOpacity, StyleSheet, Switch, Pressable } from 'react-native';
 import { CountdownCircleTimer } from 'react-native-countdown-circle-timer';
 import { Audio } from 'expo-av';
-import { useTheme } from "../context/ThemeContext";
-
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const CirclePom = () => {
-  
   const [startTime, setStartTime] = useState(null);
   const [mode, setMode] = useState('pomodoro');
   const [isPlaying, setIsPlaying] = useState(false);
@@ -18,22 +11,6 @@ const CirclePom = () => {
   const [autoActive, setAutoActive] = useState(false);
   const [timerKey, setTimerKey] = useState(0);
   const [pomodoroCount, setPomodoroCount] = useState(0);
-  const { theme } = useTheme();
-
-  const themeColors = {
-    "mode_zen": { backgroundColor: "#9cccb5", textColor: "#0b0626" },
-    "mode_nuit": { backgroundColor: "#0b0626", textColor: "#eaeaea" },
-    "mode_jour": { backgroundColor: "#eef5f8", textColor: "#24332a" },
-    "cyberpunk": { backgroundColor: "#0f0f2d", textColor: "#00ffff" },
-    "steampunk": { backgroundColor: "#3e2f1c", textColor: "#ffd699" },
-    "space": { backgroundColor: "#0c1c36", textColor: "#e0e6f7" },
-    "neon_lights": { backgroundColor: "#1f0036", textColor: "#ff00ff" },
-    "vintage": { backgroundColor: "#f4e2d8", textColor: "#4e342e" },
-    "minimalist": { backgroundColor: "#ffffff", textColor: "#333" },
-  };
-
-  const currentThemeKey = theme.replace(/\s+/g, "_").toLowerCase();
-  const currentColors = themeColors[currentThemeKey] || themeColors["mode_jour"];
 
   const alarmSound = useRef(null);
 
@@ -45,7 +22,7 @@ const CirclePom = () => {
 
   useEffect(() => {
     const loadSound = async () => {
-      const { sound } = await Audio.Sound.createAsync(require('../assets/alarmepulse.mp3'));
+      const { sound } = await Audio.Sound.createAsync(require('./alarmepulse.mp3'));
       alarmSound.current = sound;
     };
     loadSound();
@@ -101,49 +78,9 @@ const CirclePom = () => {
       return !prev;
     });
   };
-  
-  const sendSessionToAPI = async () => {
-    try {
-      const token = await AsyncStorage.getItem('token');
-      if (!token) {
-        console.warn('Token manquant.');
-        return;
-      }
-  
-      const sessionData = {
-        startedAt: startTime?.toISOString(), 
-        endedAt: new Date().toISOString(),
-        pomodoros_completes: pomodoroCount,
-        pomodoroDuration: duration.pomodoro,
-        shortBreak: duration.pauseCourte,
-        longBreak: duration.pauseLongue,
-        autoStart: auto,
-      };
-  
-      const response = await fetch('http://192.168.X.X:8000/api/pomodoro-session', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify(sessionData),
-      });
-  
-      if (!response.ok) {
-        const text = await response.text(); 
-        console.error(`Erreur API (${response.status}): ${text}`);
-        return;
-      }
-  
-      console.log('Session envoyée avec succès.');
-    } catch (error) {
-      console.error('Erreur réseau :', error.message);
-    }
-  };
 
   const handleComplete = async () => {
     await playAlarm();
-    await sendSessionToAPI(); 
 
     const nextState = () => {
       if (mode === 'pomodoro') {
@@ -173,8 +110,6 @@ const CirclePom = () => {
     return { shouldRepeat: false };
   };
 
-  
-
   const renderTime = ({ remainingTime }) => {
     const minutes = Math.floor(remainingTime / 60);
     const seconds = remainingTime % 60;
@@ -200,15 +135,8 @@ const CirclePom = () => {
             <Text style={styles.modeButtonText}>
               {btn === 'pomodoro' ? 'Pomodoro' : btn === 'pauseCourte' ? 'Pause Courte' : 'Pause Longue'}
             </Text>
-
-        
           </TouchableOpacity>
-
-          
         ))}
-            <Pressable onPress={sendSessionToAPI} style={styles.animatedBtn}>
-  <Text style={styles.animatedBtnText}>Tester Connexion API</Text>
-</Pressable>
       </View>
 
       <View style={styles.cercleBox}>
@@ -260,76 +188,68 @@ export default CirclePom;
 const styles = StyleSheet.create({
   cercleMain: {
     backgroundColor: 'white',
-    marginTop: 30,
-    marginHorizontal: 20,
+    marginTop: 50,
+    marginHorizontal: 50,
     paddingVertical: 20,
-    paddingHorizontal: 10,
     borderWidth: 1,
     borderColor: 'black',
-    borderRadius: 16,
-    gap: 16,
+    gap: 10,
   },
   btnTimerContainer: {
     marginTop: 10,
     flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
-    gap: 10,
+    justifyContent: 'space-around',
+    marginHorizontal: 20,
   },
   timerBtn: {
+    backgroundColor: '#E0EDD4',
     borderRadius: 10,
-    width: screenWidth * 0.4,
-    minWidth: 120,
+    width: 150,
     padding: 10,
-    marginVertical: 5,
     alignItems: 'center',
-    backgroundColor: '#10217f', // inactif par défaut
   },
   activeModeButton: {
-    backgroundColor: '#6979cf', // actif
+    backgroundColor: '#10217f',
   },
   modeButtonText: {
     color: 'white',
     fontFamily: 'Arial',
     fontWeight: 'bold',
-    fontSize: 14,
-    textAlign: 'center',
   },
   cercleBox: {
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 20,
+    gap: 5,
   },
   textCercle: {
-    fontSize: 32,
+    fontSize: 28,
+    fontFamily: 'Arial',
     fontWeight: 'bold',
-    textAlign: 'center',
   },
   buttonSrtContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
-    gap: 10,
     marginBottom: 10,
+    flexDirection: 'row',
+    justifyContent: 'center',
   },
   animatedBtn: {
     backgroundColor: '#10217f',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
     borderRadius: 8,
-    margin: 5,
+    marginHorizontal: 5,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
   },
   animatedBtnPressed: {
     backgroundColor: '#6979cf',
-    transform: [{ scale: 0.96 }],
+    transform: [{ scale: 0.95 }],
+    shadowOpacity: 0.2,
   },
   animatedBtnText: {
     color: 'white',
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: 'bold',
   },
   autoCont: {
@@ -337,10 +257,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     gap: 10,
-    marginTop: 10,
   },
   txtPomConsecutif: {
+    flexDirection: 'row',
+    justifyContent: 'center',
     marginTop: 10,
-    alignItems: 'center',
   },
 });
