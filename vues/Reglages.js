@@ -3,16 +3,11 @@ import { View, Text, TextInput, StyleSheet, TouchableOpacity, Platform, Dimensio
 import { useTheme } from "../context/ThemeContext";
 import { useAuth } from "../context/AuthContext";
 import DropDownPicker from 'react-native-dropdown-picker';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Reglages = () => {
-  const { theme, changeTheme } = useTheme();
+  const { theme, pomodoro, pauseCourte, pauseLongue, changeTheme, setPomodoro, setPauseCourte, setPauseLongue } = useTheme();
   const { token } = useAuth();
 
-  const [pomodoro, setPomodoro] = useState(25);
-  const [pauseCourte, setPauseCourte] = useState(5);
-  const [pauseLongue, setPauseLongue] = useState(15);
-  const [themeChoisi, setThemeChoisi] = useState(theme);
   const [themeTemp, setThemeTemp] = useState(theme);
 
   const [open, setOpen] = useState(false);
@@ -43,54 +38,11 @@ const Reglages = () => {
   const screenHeight = Dimensions.get('window').height;
   const dynamicPaddingTop = screenHeight * 0.05;
 
-  const currentThemeKey = themeChoisi.replace(/\s+/g, "_").toLowerCase();
+  const currentThemeKey = themeTemp.replace(/\s+/g, "_").toLowerCase();
   const currentColors = themeColors[currentThemeKey] || themeColors["mode_jour"];
 
-  useEffect(() => {
-    const loadSettings = async () => {
-      try {
-        const savedPomodoro = await AsyncStorage.getItem('pomodoro');
-        const savedPauseCourte = await AsyncStorage.getItem('pauseCourte');
-        const savedPauseLongue = await AsyncStorage.getItem('pauseLongue');
-
-        if (savedPomodoro !== null) setPomodoro(parseInt(savedPomodoro));
-        if (savedPauseCourte !== null) setPauseCourte(parseInt(savedPauseCourte));
-        if (savedPauseLongue !== null) setPauseLongue(parseInt(savedPauseLongue));
-      } catch (error) {
-        console.error("Erreur lors du chargement des réglages", error);
-      }
-    };
-
-    loadSettings();
-  }, []);
-
   const handleSubmit = async () => {
-    setThemeChoisi(themeTemp);
-    changeTheme(themeTemp);
-
-    try {
-      // Sauvegarde locale
-      await AsyncStorage.setItem('pomodoro', pomodoro.toString());
-      await AsyncStorage.setItem('pauseCourte', pauseCourte.toString());
-      await AsyncStorage.setItem('pauseLongue', pauseLongue.toString());
-
-      // Sauvegarde serveur
-      await fetch(`http://192.168.0.143:8000/api/reglages`, {
-        method: "PUT",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          pomodoro: parseInt(pomodoro),
-          courte_pause: parseInt(pauseCourte),
-          longue_pause: parseInt(pauseLongue),
-          theme: themeTemp,
-        }),
-      });
-    } catch (error) {
-      console.error("Erreur lors de l'enregistrement des réglages", error);
-    }
+    await changeTheme(themeTemp);
   };
 
   return (
@@ -115,7 +67,14 @@ const Reglages = () => {
                   style={[styles.input, { backgroundColor: currentColors.cardBg, color: currentColors.textColor, borderColor: currentColors.textColor }]}
                   keyboardType="numeric"
                   value={String(item.value)}
-                  onChangeText={(text) => item.setter(text)}
+                  onChangeText={(text) => {
+                    const numericValue = parseInt(text, 10);
+                    if (!isNaN(numericValue)) {
+                      item.setter(numericValue);
+                    } else {
+                      item.setter(0); // Valeur par défaut si vide
+                    }
+                  }}
                 />
               </View>
             ))}
