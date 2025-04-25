@@ -5,7 +5,7 @@ import { navigateSafe } from '../navigation/RootNavigation';
 import { navigationRef } from '../navigation/RootNavigation';
 
 const api = axios.create({
-  baseURL: 'http://192.168.2.144:8000/api',
+  baseURL: 'http://10.192.169.173:8000/api',
   withCredentials: true,
 });
 
@@ -21,7 +21,7 @@ api.interceptors.response.use(
   response => response,
   async error => {
     if (error?.response?.status === 401) {
-      console.warn('⛔ Token expiré ou invalide, déconnexion automatique.');
+      console.warn('Token expiré ou invalide, déconnexion automatique.');
       await AsyncStorage.removeItem('token');
 
       setTimeout(() => {

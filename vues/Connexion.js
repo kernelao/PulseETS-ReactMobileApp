@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import axios from 'axios';
 import {
   View,
   TextInput,
@@ -52,13 +53,13 @@ export default function Connexion() {
     try {
       
   
-      const { token } = response.data;
+      
   
       const response = await axios.post(
         // "http://10.192.183.90:8000/api/connexion",
         //"http://172.20.10.3:8000/api/connexion",
         //"http://10.0.0.11:8000/api/connexion",
-        "htpp://10.192.169.173:8000/api/connexion",
+        "http://10.192.169.173:8000/api/connexion",
         
         {
           email,
@@ -71,7 +72,7 @@ export default function Connexion() {
         }
       );
 
-      
+      const { token } = response.data;
 
       if (token) {
         console.log("✅ Token reçu :", token);
