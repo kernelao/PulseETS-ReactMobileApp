@@ -55,6 +55,8 @@ export default function Connexion() {
         // "http://10.192.183.90:8000/api/connexion",
         //"http://172.20.10.3:8000/api/connexion",
         "http://10.0.0.11:8000/api/connexion",
+        // "http://192.168.0.143:8000/api/connexion",
+         "http://10.0.0.11:8000/api/connexion",
         {
           email,
           password,
