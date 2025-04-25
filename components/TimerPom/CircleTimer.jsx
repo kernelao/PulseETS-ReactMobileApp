@@ -1,9 +1,15 @@
 import React, { useState, useRef, useEffect } from 'react';
+
+import { Dimensions } from 'react-native';
+const { width: screenWidth } = Dimensions.get('window');
 import { View, Text, TouchableOpacity, StyleSheet, Switch, Pressable } from 'react-native';
 import { CountdownCircleTimer } from 'react-native-countdown-circle-timer';
 import { Audio } from 'expo-av';
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 const CirclePom = () => {
+  
   const [startTime, setStartTime] = useState(null);
   const [mode, setMode] = useState('pomodoro');
   const [isPlaying, setIsPlaying] = useState(false);
@@ -78,9 +84,49 @@ const CirclePom = () => {
       return !prev;
     });
   };
+  
+  const sendSessionToAPI = async () => {
+    try {
+      const token = await AsyncStorage.getItem('token');
+      if (!token) {
+        console.warn('Token manquant.');
+        return;
+      }
+  
+      const sessionData = {
+        startedAt: startTime?.toISOString(), 
+        endedAt: new Date().toISOString(),
+        pomodoros_completes: pomodoroCount,
+        pomodoroDuration: duration.pomodoro,
+        shortBreak: duration.pauseCourte,
+        longBreak: duration.pauseLongue,
+        autoStart: auto,
+      };
+  
+      const response = await fetch('http://192.168.X.X:8000/api/pomodoro-session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify(sessionData),
+      });
+  
+      if (!response.ok) {
+        const text = await response.text(); 
+        console.error(`Erreur API (${response.status}): ${text}`);
+        return;
+      }
+  
+      console.log('Session envoyée avec succès.');
+    } catch (error) {
+      console.error('Erreur réseau :', error.message);
+    }
+  };
 
   const handleComplete = async () => {
     await playAlarm();
+    await sendSessionToAPI(); 
 
     const nextState = () => {
       if (mode === 'pomodoro') {
@@ -110,6 +156,8 @@ const CirclePom = () => {
     return { shouldRepeat: false };
   };
 
+  
+
   const renderTime = ({ remainingTime }) => {
     const minutes = Math.floor(remainingTime / 60);
     const seconds = remainingTime % 60;
@@ -135,8 +183,13 @@ const CirclePom = () => {
             <Text style={styles.modeButtonText}>
               {btn === 'pomodoro' ? 'Pomodoro' : btn === 'pauseCourte' ? 'Pause Courte' : 'Pause Longue'}
             </Text>
+
+            
           </TouchableOpacity>
+
+          
         ))}
+       
       </View>
 
       <View style={styles.cercleBox}>
@@ -188,68 +241,76 @@ export default CirclePom;
 const styles = StyleSheet.create({
   cercleMain: {
     backgroundColor: 'white',
-    marginTop: 50,
-    marginHorizontal: 50,
+    marginTop: 30,
+    marginHorizontal: 20,
     paddingVertical: 20,
+    paddingHorizontal: 10,
     borderWidth: 1,
     borderColor: 'black',
-    gap: 10,
+    borderRadius: 16,
+    gap: 16,
   },
   btnTimerContainer: {
     marginTop: 10,
     flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginHorizontal: 20,
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    gap: 10,
   },
   timerBtn: {
-    backgroundColor: '#E0EDD4',
     borderRadius: 10,
-    width: 150,
+    width: screenWidth * 0.4,
+    minWidth: 120,
     padding: 10,
+    marginVertical: 5,
     alignItems: 'center',
+    backgroundColor: '#10217f', // inactif par défaut
   },
   activeModeButton: {
-    backgroundColor: '#10217f',
+    backgroundColor: '#6979cf', // actif
   },
   modeButtonText: {
     color: 'white',
     fontFamily: 'Arial',
     fontWeight: 'bold',
+    fontSize: 14,
+    textAlign: 'center',
   },
   cercleBox: {
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 5,
+    paddingVertical: 20,
   },
   textCercle: {
-    fontSize: 28,
-    fontFamily: 'Arial',
+    fontSize: 32,
     fontWeight: 'bold',
+    textAlign: 'center',
   },
   buttonSrtContainer: {
-    marginBottom: 10,
     flexDirection: 'row',
+    flexWrap: 'wrap',
     justifyContent: 'center',
+    gap: 10,
+    marginBottom: 10,
   },
   animatedBtn: {
     backgroundColor: '#10217f',
-    paddingVertical: 12,
-    paddingHorizontal: 24,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
     borderRadius: 8,
-    marginHorizontal: 5,
+    margin: 5,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
   },
   animatedBtnPressed: {
     backgroundColor: '#6979cf',
-    transform: [{ scale: 0.95 }],
-    shadowOpacity: 0.2,
+    transform: [{ scale: 0.96 }],
   },
   animatedBtnText: {
     color: 'white',
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: 'bold',
   },
   autoCont: {
@@ -257,10 +318,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     gap: 10,
+    marginTop: 10,
   },
   txtPomConsecutif: {
-    flexDirection: 'row',
-    justifyContent: 'center',
     marginTop: 10,
+    alignItems: 'center',
   },
 });
