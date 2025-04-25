@@ -1,7 +1,7 @@
 export const themes = {
     'mode-jour': {
       name: 'mode-jour',
-      backgroundColor: '#eaf2fd',
+      backgroundColor: '#eef5f8',
       textColor: '#000000',
       primary: '#a6d4ff',
       secondary: '#ebf5fa',
@@ -25,8 +25,8 @@ export const themes = {
     },
     'mode-zen': {
       name: 'mode-zen',
-      backgroundColor: '#cfe4d9',
-      textColor: '#2e2e2e',
+      backgroundColor: '#9cccb5',
+      textColor: '#0b0626',
       primary: '#a8d5ba',
       secondary: '#e9f5f0',
       cardBackground: '#ffffff',

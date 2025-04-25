@@ -6,43 +6,27 @@ import api from '../api/api';
 import avatarMap from '../assets/images_avatar';
 import { badgeMap, badgeDescriptions } from '../assets/badges_recompenses';
 import { useAuth } from '../context/AuthContext';
-import { useTheme } from '../context/ThemeContext';
 import { themes } from '../styles/themes';
+import { useTheme } from '../context/ThemeContext';
 
 const Profile = () => {
   const navigation = useNavigation();
   const { logout } = useAuth();
   const { theme, applyTheme } = useTheme();
-  const currentTheme = themes[theme] || themes['mode-jour'];
 
   const [userData, setUserData] = useState(null);
   const [selectedBadge, setSelectedBadge] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
-
-  const themeColors = {
-    "mode_zen": { backgroundColor: "#9cccb5", textColor: "#0b0626" },
-    "mode_nuit": { backgroundColor: "#0b0626", textColor: "#eaeaea" },
-    "mode_jour": { backgroundColor: "#eef5f8", textColor: "#24332a" },
-    "cyberpunk": { backgroundColor: "#0f0f2d", textColor: "#00ffff" },
-    "steampunk": { backgroundColor: "#3e2f1c", textColor: "#ffd699" },
-    "space": { backgroundColor: "#0c1c36", textColor: "#e0e6f7" },
-    "neon_lights": { backgroundColor: "#1f0036", textColor: "#ff00ff" },
-    "vintage": { backgroundColor: "#f4e2d8", textColor: "#4e342e" },
-    "minimalist": { backgroundColor: "#ffffff", textColor: "#333" },
-  };
-
-  const currentThemeKey = theme.replace(/\s+/g, "_").toLowerCase();
-  const currentColors = themeColors[currentThemeKey] || themeColors["mode_jour"];
-
-
+  
   useEffect(() => {
     const fetchProfile = async () => {
       try {
         const response = await api.get('/user/profile');
         if (response.data) {
           setUserData(response.data);
-          if (response.data.theme && themes[response.data.theme]) {
-            applyTheme(response.data.theme);
+          if (response.data.theme) {
+            const normalized = response.data.theme.toLowerCase().replace(/\s+/g, "-");
+            applyTheme(normalized);
           }
         }
       } catch (error) {
@@ -64,6 +48,11 @@ const Profile = () => {
   if (!userData) {
     return <Text>Chargement...</Text>;
   }
+
+const resolvedTheme = userData.theme || theme;
+const normalizedThemeKey = resolvedTheme.toLowerCase().replace(/\s+/g, "-");
+const currentTheme = themes[normalizedThemeKey] || themes["mode-jour"];
+
 
   const { avatarPrincipal, pulsePoints, unlockedAvatars = [], recompenses = [] } = userData;
   const recompensesConverties = recompenses.map((r) => `i${r.valeur}${normalizeType(r.type)}`);

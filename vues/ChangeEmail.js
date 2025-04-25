@@ -9,8 +9,6 @@ const ChangeEmail = ({ navigation }) => {
   const [oldEmail, setOldEmail] = useState('');
   const [newEmail, setNewEmail] = useState('');
   const { theme } = useTheme();
-  const currentTheme = themes[theme] || themes['mode-jour'];
-
   const handleChangeEmail = async () => {
     if (!oldEmail || !newEmail) {
       Alert.alert('Erreur', 'Veuillez remplir les deux champs');
@@ -18,7 +16,7 @@ const ChangeEmail = ({ navigation }) => {
     }
 
     try {
-      await api.put('/user/email', {
+      await api.post('/user/change-email', {
         oldEmail,
         newEmail
       });
@@ -29,6 +27,10 @@ const ChangeEmail = ({ navigation }) => {
       console.error(err);
     }
   };
+
+    const resolvedTheme = theme;
+    const normalizedThemeKey = resolvedTheme.toLowerCase().replace(/\s+/g, "-");
+    const currentTheme = themes[normalizedThemeKey] || themes["mode-jour"];
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: currentTheme.backgroundColor }]}>

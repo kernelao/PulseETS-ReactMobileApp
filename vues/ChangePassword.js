@@ -9,7 +9,6 @@ const ChangePassword = ({ navigation }) => {
   const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const { theme } = useTheme();
-  const currentTheme = themes[theme] || themes['mode-jour'];
 
   const handleChangePassword = async () => {
     if (!oldPassword || !newPassword) {
@@ -18,9 +17,9 @@ const ChangePassword = ({ navigation }) => {
     }
 
     try {
-      await api.put('/user/password', {
-        oldPassword,
-        newPassword
+      await api.post('/user/change-password', {
+        oldPsw: oldPassword,
+        newPsw: newPassword,
       });
       Alert.alert('Succès', 'Mot de passe modifié');
       navigation.goBack();
@@ -29,6 +28,10 @@ const ChangePassword = ({ navigation }) => {
       console.error(err);
     }
   };
+
+  const resolvedTheme = theme;
+  const normalizedThemeKey = resolvedTheme.toLowerCase().replace(/\s+/g, "-");
+  const currentTheme = themes[normalizedThemeKey] || themes["mode-jour"];
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: currentTheme.backgroundColor }]}>

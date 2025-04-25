@@ -1,7 +1,7 @@
 // /api/api.js
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { navigate } from '../navigation/RootNavigation';
+import { navigateSafe } from '../navigation/RootNavigation';
 import { navigationRef } from '../navigation/RootNavigation';
 
 const api = axios.create({
