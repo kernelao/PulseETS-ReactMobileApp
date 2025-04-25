@@ -10,7 +10,7 @@ import {
 } from "react-native";
 
 import { useNavigation } from "@react-navigation/native";
-import axios from "axios";
+import api from "../api/api";
 import { useAuth } from "../context/AuthContext";
 import base64 from "base-64";
 
@@ -48,9 +48,15 @@ export default function Connexion() {
   //       console.log("Test GET API échoué :", JSON.stringify(err, null, 2));
   //     });
   // }, []);
-
   const handleConnexion = async () => {
     try {
+      const response = await api.post("/connexion", {
+        email,
+        password,
+      });
+  
+      const { token } = response.data;
+  
       const response = await axios.post(
         // "http://10.192.183.90:8000/api/connexion",
         //"http://172.20.10.3:8000/api/connexion",
@@ -70,13 +76,13 @@ export default function Connexion() {
       const { token, role } = response.data;
 
       if (token) {
-        console.log("Token reçu :", token);
-        await login(token);
+        console.log("✅ Token reçu :", token);
+        await login(token); // → stocke dans AsyncStorage
       } else {
         setErrMsg("Aucun token reçu.");
       }
     } catch (error) {
-      console.log("Erreur Axios complète :", error);
+      console.log("❌ Erreur Axios complète :", error);
       if (!error?.response) {
         setErrMsg("Aucune réponse du serveur");
       } else if (error.response?.status === 401) {
@@ -86,6 +92,7 @@ export default function Connexion() {
       }
     }
   };
+  
 
   // const handleConnexion = async () => {
   //   // Token factice pour test (1h d'expiration)
@@ -118,7 +125,7 @@ export default function Connexion() {
       />
 
       <Button title="Se connecter" onPress={handleConnexion} />
-
+    
       <TouchableOpacity onPress={() => navigation.navigate("Inscription")}>
         <Text style={styles.link}>Pas encore inscrit ? Crée un compte</Text>
       </TouchableOpacity>

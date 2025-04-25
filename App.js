@@ -1,7 +1,7 @@
 import React from "react";
-import Router from "./Router";
+import Router from "./navigation/Router";
 import { AuthProvider } from "./context/AuthContext";
-import { ThemeProvider } from "./context/ThemeContext"; // Ajoute le bon chemin ici
+import { ThemeProvider } from "./context/ThemeContext";
 
 export default function App() {
   return (
